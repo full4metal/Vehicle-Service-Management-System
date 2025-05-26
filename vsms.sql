@@ -40,8 +40,6 @@ CREATE TABLE IF NOT EXISTS `admin` (
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`admin_id`, `username`, `email`, `password`) VALUES
-(4, 'admin', 'agneyanand@gmail.com', 'pbkdf2:sha256:600000$pihE4PGOO7mwctzk$b330836b7721c9a025c0ba97fa245018621e190e57ebf12589a90371dfe74c5f');
 
 -- --------------------------------------------------------
 
