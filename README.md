@@ -1,4 +1,4 @@
-
+![image](https://github.com/user-attachments/assets/354c7cdd-94ac-46ea-b385-9d20c897663e)
 # 🚗 Vehicle Service Management System (VSMS)
 
 A web-based application built using **Python Flask** and **MySQL** that automates and streamlines the process of managing vehicle service requests. This system allows service centers to manage customers, mechanics, service histories, invoices, and parts inventory efficiently.
@@ -82,7 +82,7 @@ All tables are linked using primary/foreign key constraints to maintain relation
    ```bash
    git clone https://github.com/yourusername/vehicle-service-management-system.git
    cd vehicle-service-management-system
-````
+``
 
 2. **Set Up the Database**
 
@@ -128,11 +128,14 @@ This project gave me hands-on experience in full-stack development, user authent
 ## 📸 Screenshots
 
 Screenshots:
+![image](https://github.com/user-attachments/assets/ee5bf9b6-bb9e-45b5-9037-79b71dd5944a)
 
-![image](https://github.com/user-attachments/assets/b3729acd-65a9-48ea-8aa4-04d7e67b9c09)
+![image](https://github.com/user-attachments/assets/5928b977-7fc4-436f-85c6-beeb5131a4c8)
 
-![image](https://github.com/user-attachments/assets/90999ab4-ae13-4556-8814-309b90e19ae0)
+![image](https://github.com/user-attachments/assets/36c9232a-1e23-4115-b52f-a944ffd5a91a)
 
-![image](https://github.com/user-attachments/assets/72c90003-6655-4946-9da2-33264c689bda)
+![image](https://github.com/user-attachments/assets/4f29c7e1-2653-423f-bc09-8cb6bbf9e380)
 
-![image](https://github.com/user-attachments/assets/07bda548-bcce-4b77-b974-e096f93dd72b)
+
+
+
