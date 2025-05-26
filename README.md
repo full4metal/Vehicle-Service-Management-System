@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/354c7cdd-94ac-46ea-b385-9d20c897663e)
+
 # 🚗 Vehicle Service Management System (VSMS)
 
 A web-based application built using **Python Flask** and **MySQL** that automates and streamlines the process of managing vehicle service requests. This system allows service centers to manage customers, mechanics, service histories, invoices, and parts inventory efficiently.
