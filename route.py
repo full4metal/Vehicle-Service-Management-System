@@ -27,9 +27,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'agneyanand@gmail.com'
-app.config['MAIL_PASSWORD'] = 'jkvk xdhe huoq ixmy '
-app.config['MAIL_DEFAULT_SENDER'] = 'agneyanand@gmail.com'
+app.config['MAIL_USERNAME'] = '' //add
+app.config['MAIL_PASSWORD'] = '' //add
+app.config['MAIL_DEFAULT_SENDER'] = '' //add
 mail = Mail(app)
 
 # Specify the folder where uploaded images will be stored
