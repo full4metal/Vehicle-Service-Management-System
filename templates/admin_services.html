@@ -1,0 +1,161 @@
+{% extends "admin_base.html" %}
+
+{% block title %}ADMIN CarServ{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h1>Services</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Service ID</th>
+                <th>Customer</th>
+                <th>Vehicle</th>
+                <th>Mechanic</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in services %}
+            <tr>
+                <td>{{ service['service_id'] }}</td>
+                <td>{{ service['customer_name'] }}</td>
+                <td>{{ service['make'] }} {{ service['model'] }}</td>
+                <td>{{ service['mechanic_name'] or 'Not Assigned' }}</td>
+                <td>{{ service['description'] }}</td>
+                <td>{{ service['status'] }}</td>
+                <td>{{ service['created_on'].strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <button class="btn" onclick="openModal('editServiceModal{{ service['service_id'] }}')"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to delete this service?')) deleteService({{ service['service_id'] }})"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for service in services %}
+<div id="editServiceModal{{ service['service_id'] }}" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editServiceModal{{ service['service_id'] }}')">&times;</span>
+        <h2>Edit Service</h2>
+        <form id="editServiceForm{{ service['service_id'] }}" onsubmit="return updateService({{ service['service_id'] }})">
+            <div class="form-group">
+                <label for="mechanic{{ service['service_id'] }}">Mechanic:</label>
+                <select id="mechanic{{ service['service_id'] }}" name="mechanic_id" class="form-control" required>
+                    <option value="">Select Mechanic</option>
+                    {% for mechanic in mechanics %}
+                    <option value="{{ mechanic[0] }}" {% if mechanic[0] == service['mechanic_id'] %}selected{% endif %}>{{ mechanic[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status{{ service['service_id'] }}">Status:</label>
+                <select id="status{{ service['service_id'] }}" name="status" class="form-control" required>
+                    <option value="pending" {% if service['status'] == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="in-progress" {% if service['status'] == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="completed" {% if service['status'] == 'Completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Update Service</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    function updateService(serviceId) {
+        const form = document.getElementById(`editServiceForm${serviceId}`);
+        const formData = new FormData(form);
+        
+        fetch(`/update_service/${serviceId}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Service updated successfully');
+                closeModal(`editServiceModal${serviceId}`);
+                location.reload();
+            } else {
+                alert('Error updating service');
+            }
+        });
+        
+        return false;
+    }
+
+    function deleteService(serviceId) {
+    if (confirm('Are you sure you want to delete this service?')) {
+        fetch(`/admin_delete_service/${serviceId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Service deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error deleting service');
+                }
+            });
+    }
+}
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

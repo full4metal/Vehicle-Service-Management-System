@@ -1,0 +1,99 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Admin Reports - VSMS{% endblock %}
+
+{% block content %}
+<div class="module">
+   <h1>Service Reports</h1>
+   
+   <div class="card">
+       <h2>Generate Report</h2>
+       <form id="reportForm" class="space-y-4">
+           <div class="form-group">
+               <label for="report_type" class="block text-sm font-medium text-gray-300">Report Type</label>
+               <select id="report_type" name="report_type" class="form-control" required>
+                   <option value="daily">Daily Report</option>
+                   <option value="weekly">Weekly Report</option>
+                   <option value="monthly">Monthly Report</option>
+                   <option value="custom">Custom Date Range</option>
+               </select>
+           </div>
+           <div class="form-group">
+               <label for="report_category" class="block text-sm font-medium text-gray-300">Report Category</label>
+               <select id="report_category" name="report_category" class="form-control" required>
+                   <option value="services">Services</option>
+                   <option value="customers">Customers</option>
+                   <option value="invoices">Invoices</option>
+               </select>
+           </div>
+           <div id="customDateRange" class="space-y-2" style="display: none;">
+               <div class="form-group">
+                   <label for="start_date" class="block text-sm font-medium text-gray-300">Start Date</label>
+                   <input type="date" id="start_date" name="start_date" class="form-control">
+               </div>
+               <div class="form-group">
+                   <label for="end_date" class="block text-sm font-medium text-gray-300">End Date</label>
+                   <input type="date" id="end_date" name="end_date" class="form-control">
+               </div>
+           </div>
+           <button type="submit" class="btn bg-accent-color hover:bg-accent-hover text-white font-bold py-2 px-4 rounded">
+               Generate Report
+           </button>
+       </form>
+   </div>
+
+   <div id="reportResult" class="mt-8" style="display: none;">
+       <h2 class="text-xl font-semibold mb-4">Report Generated</h2>
+     
+   </div>
+</div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+       const reportForm = document.getElementById('reportForm');
+       const reportType = document.getElementById('report_type');
+       const customDateRange = document.getElementById('customDateRange');
+       const reportResult = document.getElementById('reportResult');
+       const downloadPDF = document.getElementById('downloadPDF');
+
+       reportType.addEventListener('change', function() {
+           customDateRange.style.display = this.value === 'custom' ? 'block' : 'none';
+       });
+
+       reportForm.addEventListener('submit', function(e) {
+           e.preventDefault();
+           const formData = new FormData(this);
+
+           fetch('/admin/generate_report', {
+               method: 'POST',
+               body: formData
+           })
+           .then(response => {
+               if (response.ok) {
+                   return response.blob();
+               }
+               throw new Error('Network response was not ok.');
+           })
+           .then(blob => {
+               const url = window.URL.createObjectURL(blob);
+               const a = document.createElement('a');
+               a.style.display = 'none';
+               a.href = url;
+               a.download = 'service_report.pdf';
+               document.body.appendChild(a);
+               a.click();
+               window.URL.revokeObjectURL(url);
+               reportResult.style.display = 'block';
+           })
+           .catch(error => {
+               console.error('Error:', error);
+               alert('An error occurred while generating the report');
+           });
+       });
+
+       downloadPDF.addEventListener('click', function() {
+           reportForm.dispatchEvent(new Event('submit'));
+       });
+   });
+</script>
+{% endblock %}

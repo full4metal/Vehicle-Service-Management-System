@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadside Assistance - VSMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        .bg-gradient {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient min-h-screen text-white">
+    <nav class="p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="" class="text-2xl font-bold animate-pulse">CarServ</a>
+            <a href="{{ url_for('customer_dashboard') }}" class="bg-white text-blue-600 px-4 py-2 rounded-full hover:bg-blue-100 transition duration-300">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-8 text-center animate-fade-in">Roadside Assistance</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-effect p-6 animate-slide-in">
+                <h2 class="text-2xl font-semibold mb-4">Request Assistance</h2>
+                <form id="assistanceForm" class="space-y-4">
+                    <div>
+                        <label for="vehicle" class="block text-sm font-medium">Select Vehicle</label>
+                        <select id="vehicle" name="vehicle_id" required class="mt-1 block w-full rounded-md bg-black bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white">
+                            {% for vehicle in vehicles %}
+                                <option value="{{ vehicle['vehicle_id'] }}">{{ vehicle['make'] }} {{ vehicle['model'] }} ({{ vehicle['reg_no'] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="issue" class="block text-sm font-medium">Describe the Issue</label>
+                        <textarea id="issue" name="issue" rows="3" required class="mt-1 block w-full rounded-md bg-black bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"></textarea>
+                    </div>
+                    <div>
+                        <label for="location" class="block text-sm font-medium">Your Location</label>
+                        <input type="text" id="location" name="location" readonly required class="mt-1 block w-full rounded-md bg-black bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white">
+                    </div>
+                    <button type="submit" class="w-full bg-white text-blue-600 font-bold py-2 px-4 rounded-full hover:bg-blue-100 transition duration-300 transform hover:scale-105">
+                        Request Assistance
+                    </button>
+                </form>
+            </div>
+            
+            <div class="glass-effect p-6 animate-slide-in" style="animation-delay: 0.2s;">
+                <h2 class="text-2xl font-semibold mb-4">Your Location</h2>
+                <div id="map" class="w-full h-64 rounded-lg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBprBpanCUvMKiZXh-3z14oZjzHx9FbZwg&callback=initMap" async defer></script>
+    <script>
+    let map, marker;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 15,
+            styles: [
+                {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+                {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+                {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+                {
+                    featureType: 'administrative.locality',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#d59563'}]
+                },
+                {
+                    featureType: 'poi',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#d59563'}]
+                },
+                {
+                    featureType: 'poi.park',
+                    elementType: 'geometry',
+                    stylers: [{color: '#263c3f'}]
+                },
+                {
+                    featureType: 'poi.park',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#6b9a76'}]
+                },
+                {
+                    featureType: 'road',
+                    elementType: 'geometry',
+                    stylers: [{color: '#38414e'}]
+                },
+                {
+                    featureType: 'road',
+                    elementType: 'geometry.stroke',
+                    stylers: [{color: '#212a37'}]
+                },
+                {
+                    featureType: 'road',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#9ca5b3'}]
+                },
+                {
+                    featureType: 'road.highway',
+                    elementType: 'geometry',
+                    stylers: [{color: '#746855'}]
+                },
+                {
+                    featureType: 'road.highway',
+                    elementType: 'geometry.stroke',
+                    stylers: [{color: '#1f2835'}]
+                },
+                {
+                    featureType: 'road.highway',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#f3d19c'}]
+                },
+                {
+                    featureType: 'transit',
+                    elementType: 'geometry',
+                    stylers: [{color: '#2f3948'}]
+                },
+                {
+                    featureType: 'transit.station',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#d59563'}]
+                },
+                {
+                    featureType: 'water',
+                    elementType: 'geometry',
+                    stylers: [{color: '#17263c'}]
+                },
+                {
+                    featureType: 'water',
+                    elementType: 'labels.text.fill',
+                    stylers: [{color: '#515c6d'}]
+                },
+                {
+                    featureType: 'water',
+                    elementType: 'labels.text.stroke',
+                    stylers: [{color: '#17263c'}]
+                }
+            ]
+        });
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                map.setCenter(pos);
+                marker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: 'Your Location',
+                    animation: google.maps.Animation.DROP
+                });
+
+                document.getElementById('location').value = `${pos.lat}, ${pos.lng}`;
+            }, function() {
+                handleLocationError(true, map.getCenter());
+            });
+        } else {
+            handleLocationError(false, map.getCenter());
+        }
+    }
+
+    function handleLocationError(browserHasGeolocation, pos) {
+        alert(browserHasGeolocation ?
+            'Error: The Geolocation service failed.' :
+            'Error: Your browser doesn\'t support geolocation.');
+    }
+
+    document.getElementById('assistanceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/request_assistance', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Assistance request sent successfully!');
+                this.reset();
+            } else {
+                alert('Failed to send assistance request: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the assistance request');
+        });
+    });
+    </script>
+</body>
+</html>

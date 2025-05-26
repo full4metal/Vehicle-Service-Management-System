@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Service Status - VSMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Update Service Status</h1>
+            
+            <form id="updateServiceForm" action="{{ url_for('update_service_status', service_id=service[0]) }}" method="post">
+                <div class="mb-4">
+                    <label for="service_id" class="block text-gray-700 text-sm font-bold mb-2">Service ID:</label>
+                    <input type="text" id="service_id" name="service_id" value="{{ service[0] }}" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly>
+                </div>
+                
+                
+                <div class="mb-4">
+                    <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                    <select id="status" name="status" class="w-full px-3 py-2 border rounded-md" required>
+                        <option value="pending" {% if service[4] == 'pending' %}selected{% endif %}>pending</option>
+                        <option value="in-progress" {% if service[4] == 'in-progress' %}selected{% endif %}>in-progress</option>
+                        <option value="completed" {% if service[4] == 'completed' %}selected{% endif %}>completed</option>
+                    </select>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="next_service_date" class="block text-gray-700 text-sm font-bold mb-2">Next Service Date:</label>
+                    <input type="text" id="next_service_date" name="next_service_date" class="w-full px-3 py-2 border rounded-md" placeholder="Select next service date" required>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        Update Service
+                    </button>
+                    <a href="{{ url_for('mechanic_services') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 transition duration-300">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+            
+          
+            
+        </div>
+    </div>
+
+    <script>
+        flatpickr("#next_service_date", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+        });
+
+        document.getElementById('updateServiceForm').addEventListener('submit', function(e) {
+            const statusSelect = document.getElementById('status');
+            if (statusSelect.value === 'completed') {
+                if (!confirm('Are you sure you want to mark this service as completed? This will change your status to available.')) {
+                    e.preventDefault();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

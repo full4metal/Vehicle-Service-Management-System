@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>CarServ</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- style css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- fevicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/fevicon.png') }}" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mCustomScrollbar.min.css') }}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <!-- Add these before your custom script -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+</head>
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="{{ url_for('static', filename='images/loading.gif') }}" alt="#" /></div>
+    </div>
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+        <!-- header inner -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                        <div class="full">
+                            <div class="center-desk">
+                                <div class="logo">
+                                    <a href="index.html"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="#" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                        <nav class="navigation navbar navbar-expand-md navbar-dark">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarsExample04">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href=""> Home </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="">About</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="">Service</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        
+                                        <a class="nav-link" href="{{ url_for('mechanic_login') }}">Mechanic</a>
+
+                                    </li>
+                                    <li class="nav-item d_none">
+   
+                                    <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal">
+                                        <i class="fa fa-user-circle padd_right" aria-hidden="true"></i>Login/Register
+                                    </a>
+
+                                    </li>
+                                    
+                                    <li class="nav-item d_none">
+                                        <a class="nav-link" href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header inner -->
+    <!-- end header -->
+    <!-- banner -->
+    <section class="banner_main">
+        <div id="banner1" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#banner1" data-slide-to="0" class="active"></li>
+                <li data-target="#banner1" data-slide-to="1"></li>
+                <li data-target="#banner1" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="container-fluid">
+                        <div class="carousel-caption">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-bg">
+                                        <h1>Welcome</h1>
+                                        <span>To CarServ</span>
+                                        
+                                        <a href="#">More Info </a> <a href="#">Contact Us</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text_img">
+                                        <figure><img src="{{ url_for('static', filename='images/car.png') }}" alt="#"/></figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container-fluid">
+                        <div class="carousel-caption">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-bg">
+                                        <h1>Welcome</h1>
+                                        <span>to CarServ</span>
+                                        
+                                        <a href="#">More Info </a> <a href="#">Contact Us</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text_img">
+                                        <figure><img src="{{ url_for('static', filename='images/car.png') }}" alt="#"/></figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container-fluid">
+                        <div class="carousel-caption">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-bg">
+                                        <h1>Welcome</h1>
+                                        <span>car repair services</span>
+                                        
+                                        <a href="#">More Info </a> <a href="#">Contact Us</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text_img">
+                                        <figure><img src="{{ url_for('static', filename='images/car.png') }}" alt="#"/></figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            <a class="carousel-control-next" href="#banner1" role="button" data-slide="next">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    </section>
+    <!-- end banner -->
+    <!-- three_box -->
+    <div class="three_box">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="box_text">
+                        <h3>AUTO DIAGNOSE</h3>
+                        <i><img src="{{ url_for('static', filename='images/thr.png') }}" alt="#"/></i>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="box_text">
+                        <h3>ENGINE CHECKING</h3>
+                        <i><img src="{{ url_for('static', filename='images/thr1.png') }}" alt="#"/></i>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="box_text">
+                        <h3>WHEEL ALIGNMENT</h3>
+                        <i><img src="{{ url_for('static', filename='images/thr2.png') }}" alt="#"/></i>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end three_box -->
+    <!-- about -->
+    <section class="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <figure><img src="{{ url_for('static', filename='images/logo-ctg.png') }}" alt="#"/></figure>
+                </div>
+                <div class="col-md-6">
+                    <div class="about_text">
+                        <h2>About Us</h2>
+                        <p>CarServ is a trusted vehicle service company dedicated to providing top-notch automotive maintenance and repair services. With a team of highly skilled mechanics and a customer-first approach, CarServ ensures that every vehicle receives expert care, whether it's routine maintenance or complex repairs. </p>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end about -->
+    <!-- What We Do -->
+    <section class="what_we_do">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="what_text">
+                        <i><img src="{{ url_for('static', filename='images/img3.png') }}" alt="#"/></i>
+                        <h3>Car Repair</h3>
+                        
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="what_text">
+                        <i><img src="{{ url_for('static', filename='images/img4.png') }}" alt="#"/></i>
+                        <h3>Maintenance</h3>
+                       
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="what_text">
+                        <i><img src="{{ url_for('static', filename='images/img2.png') }}" alt="#"/></i>
+                        <h3>Consultation</h3>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end What We Do -->
+    <!-- testimonial -->
+    <section class="testimonial">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="test_text">
+                        
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="test_img">
+                        <figure><img src="{{ url_for('static', filename='images/testimonial.png') }}" alt=""/></figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end testimonial -->
+    <!-- footer -->
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="footer_logo">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="footer_contact">
+                       
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+    
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <div class="text-center">
+                    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <!-- Javascript files -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fancybox.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+</body>
+</html>

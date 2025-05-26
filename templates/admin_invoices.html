@@ -1,0 +1,140 @@
+{% extends "admin_base.html" %}
+
+{% block title %}ADMIN CarServ{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h1>Invoices</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice ID</th>
+                <th>Service ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Invoice Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice[0] }}</td>
+                <td>{{ invoice[1] }}</td>
+                <td>{{ invoice[2] }}</td>
+                <td>₹{{ "%.2f"|format(invoice[3]) }}</td>
+                <td>{{ invoice[4] }}</td>
+                <td>{{ invoice[5].strftime('%Y-%m-%d %H:%M:%S') if invoice[5] else 'N/A' }}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to delete this invoice?')) deleteInvoice({{ invoice[0] }})"><i class="fas fa-trash"></i> Delete</button>
+                    
+                      <button 
+                        class="btn btn-primary {% if invoice[4] == 'PAID' %}btn-secondary cursor-not-allowed{% endif %}" 
+                        onclick="{% if invoice[4] != 'PAID' %}sendReminder({{ invoice[0] }}){% endif %}">
+                        <i class="fas fa-envelope"></i> 
+                        {% if invoice[4] == 'PAID' %}
+                            Reminder Sent
+                        {% else %}
+                            Send Reminder
+                        {% endif %}
+                    </button>
+  
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Invoice Modal -->
+<div id="createInvoiceModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('createInvoiceModal')">&times;</span>
+        <h2>Create New Invoice</h2>
+        <form id="createInvoiceForm">
+            <div class="form-group">
+                <label for="service_id">Completed Service:</label>
+                <select id="service_id" name="service_id" class="form-control" required>
+                    <option value="">Select a service</option>
+                    {% for service in completed_services %}
+                    <option value="{{ service[0] }}">Service ID: {{ service[0] }} - {{ service[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="total_amount">Total Amount:</label>
+                <input type="number" id="total_amount" name="total_amount" step="0.01" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="payment_status">Payment Status:</label>
+                <select id="payment_status" name="payment_status" class="form-control" required>
+                    <option value="">Select a status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Create Invoice</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function deleteInvoice(invoiceId) {
+        fetch("{{ url_for('delete_invoice', invoice_id=0) }}".replace('0', invoiceId), {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Invoice deleted successfully');
+                location.reload();
+            } else {
+                alert('Failed to delete invoice: ' + data.message);
+            }
+        });
+    }
+
+    function sendReminder(invoiceId) {
+        fetch("{{ url_for('send_invoice_reminder', invoice_id=0) }}".replace('0', invoiceId), {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reminder sent successfully');
+            } else {
+                alert('Failed to send reminder: ' + data.message);
+            }
+        });
+    }
+
+    document.getElementById('createInvoiceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{{ url_for('create_invoice') }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Invoice created successfully');
+                location.reload();
+            } else {
+                alert('Failed to create invoice: ' + data.message);
+            }
+        });
+        closeModal('createInvoiceModal');
+    });
+
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+</script>
+{% endblock %}

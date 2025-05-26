@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mechanic Dashboard - VSMS{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-800 text-white">
+            <div class="p-4">
+                <h1 class="text-2xl font-semibold">CarServ Mechanic</h1>
+            </div>
+            <nav class="mt-4">
+                <a href="{{ url_for('mechanic_dashboard') }}" class="block py-2 px-4 hover:bg-blue-700 {% if request.endpoint == 'mechanic_dashboard' %}bg-blue-700{% endif %}">Dashboard</a>
+                <a href="{{ url_for('mechanic_services') }}" class="block py-2 px-4 hover:bg-blue-700 {% if request.endpoint == 'mechanic_services' %}bg-blue-700{% endif %}">Services</a>
+                <a href="{{ url_for('mechanic_invoices') }}" class="block py-2 px-4 hover:bg-blue-700 {% if request.endpoint == 'mechanic_invoices' %}bg-blue-700{% endif %}">Invoices</a>
+                <a href="{{ url_for('mechanic_assistance_requests') }}" class="block py-2 px-4 hover:bg-blue-700 {% if request.endpoint == 'mechanic_assistance_requests' %}bg-blue-700{% endif %}">Assistance Requests</a>
+                <a href="{{ url_for('mechanic_reports') }}" class="block py-2 px-4 hover:bg-blue-700 {% if request.endpoint == 'mechanic_reports' %}bg-blue-700{% endif %}">Reports</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-x-hidden overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <h1 class="text-3xl font-bold text-gray-900">
+                        {% block header %}{% endblock %}
+                    </h1>
+                    <a href="{{ url_for('mechanic_logout') }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        Logout
+                    </a>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+</html>

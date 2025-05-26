@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VSMS Customer Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .vehicle-card {
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn {
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        .btn:hover::after {
+            animation: ripple 1s ease-out;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            20% { transform: scale(25, 25); opacity: 1; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            max-width: 200px;
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .tab-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .content-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .user-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .user-menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .user-menu-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .user-menu-content a:hover {
+            background-color: #ddd;
+        }
+        .user-menu:hover .user-menu-content {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .username {
+            font-weight: bold;
+            margin-right: 10px;
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .username:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+    </style>
+    
+</head>
+<body class="min-h-screen">
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">CarServ</h1>
+            <div class="flex items-center">
+                <div class="user-menu">
+                    <span class="username">{{ session.user }}</span>
+                  
+                </div>
+                <a href="{{ url_for('customer_logout') }}" class="btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-8 p-4">
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="vehicles">My Vehicles</button>
+            <button class="tab-btn" data-tab="add-vehicle">Add Vehicle</button>
+            <button class="tab-btn" data-tab="book-service">Book Service</button>
+            <button class="tab-btn" data-tab="service-history">Service History</button>
+            <button class="tab-btn" data-tab="invoices">Invoices</button>
+            <button class="tab-btn" data-tab="reports">Reports</button>
+            <a href="{{ url_for('roadside_assistance') }}" class="tab-btn" data-tab="roadside-assistance">Roadside Assistance</a>
+            
+            <!-- <button class="tab-btn" data-tab="ai-assistant">AI Assistant</button>    -->
+        </div>
+
+        <div class="content-container">
+            <div id="vehicles" class="tab-content active">
+                {% block vehicles %}{% endblock %}
+            </div>
+
+            <div id="add-vehicle" class="tab-content">
+                {% block add_vehicle %}{% endblock %}
+            </div>
+
+            <div id="book-service" class="tab-content">
+                {% block book_service %}{% endblock %}
+            </div>
+
+            <div id="service-history" class="tab-content">
+                {% block service_history %}{% endblock %}
+            </div>
+
+            <div id="invoices" class="tab-content">
+                {% block invoices %}{% endblock %}
+            </div>
+            
+            <div id="ai-assistant" class="tab-content">
+                {% block ai_assistant %}{% endblock %}
+             </div>
+
+
+             <div id="roadside-assistance" class="tab-content">
+                {% block roadside_assistance %}{% endblock %}
+            </div>
+
+             <div id="reports" class="tab-content">
+                {% block reports %}{% endblock %}
+            </div>
+            
+
+
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                const tabId = btn.getAttribute('data-tab');
+                const href = btn.getAttribute('href');
+
+                if (href) {
+                    // If the button has an href attribute, let the default link behavior happen
+                    return;
+                }
+
+                event.preventDefault();
+
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked tab
+                btn.classList.add('active');
+
+                // Add active class to corresponding content
+                const targetContent = document.getElementById(tabId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                } else {
+                    console.error(`Tab content with id "${tabId}" not found`);
+                }
+            });
+        });
+
+        // Check if there's a hash in the URL and activate the corresponding tab
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const tabToActivate = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+            if (tabToActivate) {
+                tabToActivate.click();
+            }
+        }
+    });
+</script>
+    
+</body>
+</html>

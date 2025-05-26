@@ -1,0 +1,157 @@
+{% extends "admin_base.html" %}
+
+{% block title %}ADMIN CarServ{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h1>Mechanics</h1>
+    
+    <button class="btn" onclick="openModal('addMechanicModal')">Add New Mechanic</button>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mechanic in mechanics %}
+            <tr>
+                <td>{{ mechanic.id }}</td>
+                <td>{{ mechanic.name }}</td>
+                <td>{{ mechanic.username }}</td>
+                <td>{{ mechanic.status }}</td>
+                <td>
+                    <button class="btn" onclick="openModal('editMechanicModal{{ mechanic.id }}')"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to delete this mechanic?')) deleteMechanic({{ mechanic.id }})"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Mechanic Modal -->
+<div id="addMechanicModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addMechanicModal')">&times;</span>
+        <h2>Add New Mechanic</h2>
+        <form id="addMechanicForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status" class="form-control" required>
+                    <option value="Available">Available</option>
+                    <option value="Busy">Busy</option>
+                    <option value="On Leave">On Leave</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Add Mechanic</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Mechanic Modal -->
+{% for mechanic in mechanics %}
+<div id="editMechanicModal{{ mechanic.id }}" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editMechanicModal{{ mechanic.id }}')">&times;</span>
+        <h2>Edit Mechanic</h2>
+        <form id="editMechanicForm{{ mechanic.id }}" onsubmit="return updateMechanic({{ mechanic.id }})">
+            <div class="form-group">
+                <label for="editName{{ mechanic.id }}">Name:</label>
+                <input type="text" id="editName{{ mechanic.id }}" name="name" class="form-control" value="{{ mechanic.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="editUsername{{ mechanic.id }}">Username:</label>
+                <input type="text" id="editUsername{{ mechanic.id }}" name="username" class="form-control" value="{{ mechanic.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="editStatus{{ mechanic.id }}">Status:</label>
+                <select id="editStatus{{ mechanic.id }}" name="status" class="form-control" required>
+                    <option value="Available" {% if mechanic.status == 'Available' %}selected{% endif %}>Available</option>
+                    <option value="Busy" {% if mechanic.status == 'Busy' %}selected{% endif %}>Busy</option>
+                    <option value="On Leave" {% if mechanic.status == 'On Leave' %}selected{% endif %}>On Leave</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Update Mechanic</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    function deleteMechanic(mechanicId) {
+        if (confirm('Are you sure you want to delete this mechanic?')) {
+            fetch(`/delete_mechanic/${mechanicId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Mechanic deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Error deleting mechanic');
+                    }
+                });
+        }
+    }
+
+    function updateMechanic(mechanicId) {
+        const form = document.getElementById(`editMechanicForm${mechanicId}`);
+        const formData = new FormData(form);
+        
+        fetch(`/update_mechanic/${mechanicId}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Mechanic updated successfully');
+                closeModal(`editMechanicModal${mechanicId}`);
+                location.reload();
+            } else {
+                alert('Error updating mechanic');
+            }
+        });
+        
+        return false;
+    }
+
+    document.getElementById('addMechanicForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('{{ url_for("admin_mechanics") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                closeModal('addMechanicModal');
+                location.reload();
+            } else {
+                alert('Error adding mechanic');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "mechanic_base.html" %}
+
+{% block title %}Mechanic Reports - VSMS{% endblock %}
+
+{% block header %}Service Reports{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-semibold mb-4">Generate Service Report</h2>
+    <form id="reportForm" class="space-y-4">
+        <div class="flex flex-col">
+            <label for="report_type" class="mb-1 text-sm font-medium text-gray-700">Report Type</label>
+            <select id="report_type" name="report_type" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                <option value="daily">Daily Report</option>
+                <option value="weekly">Weekly Report</option>
+                <option value="monthly">Monthly Report</option>
+                <option value="custom">Custom Date Range</option>
+            </select>
+        </div>
+        <div id="customDateRange" class="space-y-2" style="display: none;">
+            <div class="flex flex-col">
+                <label for="start_date" class="mb-1 text-sm font-medium text-gray-700">Start Date</label>
+                <input type="date" id="start_date" name="start_date" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div class="flex flex-col">
+                <label for="end_date" class="mb-1 text-sm font-medium text-gray-700">End Date</label>
+                <input type="date" id="end_date" name="end_date" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
+            Generate Report
+        </button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportForm = document.getElementById('reportForm');
+        const reportType = document.getElementById('report_type');
+        const customDateRange = document.getElementById('customDateRange');
+
+        reportType.addEventListener('change', function() {
+            customDateRange.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/mechanic/generate_report', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'mechanic_service_report.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while generating the report');
+            });
+        });
+    });
+</script>
+{% endblock %}

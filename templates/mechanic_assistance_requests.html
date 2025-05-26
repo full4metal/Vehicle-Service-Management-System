@@ -1,0 +1,152 @@
+{% extends "mechanic_base.html" %}
+
+{% block title %}Assistance Requests - VSMS{% endblock %}
+
+{% block header %}Road Side Assistance Requests{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Assistance Requests</h2>
+        <div class="space-y-4">
+            {% for request in assistance_requests %}
+            <div class="border-b pb-4 last:border-b-0">
+                <h3 class="text-xl font-semibold mb-2">Request #{{ request.service_id }}</h3>
+                <p><strong>Vehicle:</strong> {{ request.make }} {{ request.model }} ({{ request.reg_no }})</p>
+                <p><strong>Customer:</strong> {{ request.customer_name }}</p>
+                <p><strong>Issue:</strong> {{ request.description }}</p>
+                <p><strong>Location:</strong> <span class="customer-location" data-location="{{ request.location }}">{{ request.location }}</span></p>
+                <p><strong>Requested at:</strong> {{ request.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Distance:</strong> <span id="distance-{{ request.service_id }}">Calculating...</span></p>
+                <div class="mt-4 space-x-2">
+                    {% if request.status == 'pending' %}
+                    <button onclick="acceptRequest({{ request.service_id }})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Accept
+                    </button>
+                    {% endif %}
+                    <button onclick="showDirections('{{ request.location }}', {{ request.service_id }})" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                        Show Directions
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Map</h2>
+        <div id="map" class="w-full h-96 rounded-lg"></div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBprBpanCUvMKiZXh-3z14oZjzHx9FbZwg&libraries=places"></script>
+<script>
+let map, directionsService, directionsRenderer, distanceMatrixService;
+const serviceCenterLocation = { lat: 10.0271, lng: 76.3082 }; // Replace with your service center's coordinates
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: serviceCenterLocation,
+        zoom: 12
+    });
+
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    distanceMatrixService = new google.maps.DistanceMatrixService();
+    directionsRenderer.setMap(map);
+
+    // Add a marker for the service center
+    new google.maps.Marker({
+        position: serviceCenterLocation,
+        map: map,
+        title: 'Service Center',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+    });
+
+    // Add markers for all customer locations and calculate distances
+    document.querySelectorAll('.customer-location').forEach(elem => {
+        const location = elem.dataset.location.split(',');
+        const lat = parseFloat(location[0]);
+        const lng = parseFloat(location[1]);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+                title: 'Customer Location',
+                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            });
+            calculateDistance(serviceCenterLocation, { lat, lng }, elem.closest('div').id.split('-')[1]);
+        }
+    });
+}
+
+function calculateDistance(origin, destination, roadId) {
+    distanceMatrixService.getDistanceMatrix(
+        {
+            origins: [origin],
+            destinations: [destination],
+            travelMode: 'DRIVING',
+            unitSystem: google.maps.UnitSystem.METRIC
+        },
+        (response, status) => {
+            if (status === 'OK') {
+                const distance = response.rows[0].elements[0].distance.text;
+                document.getElementById(`distance-${roadId}`).textContent = distance;
+            } else {
+                console.error('Error calculating distance:', status);
+                document.getElementById(`distance-${roadId}`).textContent = 'Unable to calculate';
+            }
+        }
+    );
+}
+
+function showDirections(customerLocation, roadId) {
+    const [lat, lng] = customerLocation.split(',').map(parseFloat);
+    if (isNaN(lat) || isNaN(lng)) {
+        alert('Invalid customer location');
+        return;
+    }
+
+    const request = {
+        origin: serviceCenterLocation,
+        destination: { lat, lng },
+        travelMode: 'DRIVING'
+    };
+
+    directionsService.route(request, (result, status) => {
+        if (status === 'OK') {
+            directionsRenderer.setDirections(result);
+            const distance = result.routes[0].legs[0].distance.text;
+            document.getElementById(`distance-${roadId}`).textContent = distance;
+        } else {
+            alert('Directions request failed due to ' + status);
+        }
+    });
+}
+
+function acceptRequest(serviceId) {
+    if (confirm('Are you sure you want to accept this assistance request?')) {
+        fetch(`/mechanic/accept_assistance/${serviceId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Failed to accept request: ' + data.message);
+                    if (data.message === 'Request no longer available') {
+                        location.reload();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request');
+            });
+    }
+}
+
+// Initialize the map when the page loads
+window.onload = initMap;
+</script>
+{% endblock %}
