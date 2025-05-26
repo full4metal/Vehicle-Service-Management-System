@@ -127,7 +127,6 @@ This project gave me hands-on experience in full-stack development, user authent
 
 ## 📸 Screenshots
 
-Screenshots:
 ![image](https://github.com/user-attachments/assets/ee5bf9b6-bb9e-45b5-9037-79b71dd5944a)
 
 ![image](https://github.com/user-attachments/assets/5928b977-7fc4-436f-85c6-beeb5131a4c8)
